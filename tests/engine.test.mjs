@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import {
   normalizeConfig, initialState, tick, lock, answer, pickWord, buildOptions,
   configAssetPaths, compareVersions, MAX_HEARTBEAT_GAP_MS,
@@ -12,15 +12,17 @@ const cfg = (settings = {}) => normalizeConfig({ ...bundled, settings: { ...bund
 // Deterministic RNG
 const seeded = (seed = 1) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
-test('bundled config.conf is valid and has 20 short words', () => {
+test('bundled config.conf is valid; every word is short with a picture and audio on disk', () => {
   const c = normalizeConfig(bundled);
-  assert.equal(c.words.length, 20);
+  assert.equal(c.words.length, bundled.words.length, 'no words dropped');
+  assert.ok(c.words.length >= 40);
   for (const w of c.words) {
     assert.ok(w.word.length <= 5, `${w.word} too long`);
     assert.ok(w.distractors.length >= 3, `${w.word} needs 3 distractors`);
     assert.ok(!w.distractors.includes(w.word));
+    for (const f of [w.image, w.audio]) assert.ok(existsSync(new URL(`../extension/${f}`, import.meta.url)), `${f} missing`);
   }
-  assert.deepEqual(c.settings, { githubCheckIntervalMinutes: 30, overlayFrequencyMinutes: 5, quizzesToUnlock: 1, triesPerWord: 3 });
+  assert.deepEqual(c.settings, { githubCheckIntervalMinutes: 30, overlayFrequencyMinutes: 1, quizzesToUnlock: 1, triesPerWord: 3 });
 });
 
 test('normalizeConfig clamps bad settings and rejects unsafe paths', () => {
@@ -137,7 +139,7 @@ test('pickWord avoids recent words and favours missed ones', () => {
   stats.bath = { shown: 10, correct: 0, wrong: 10 };
   let bath = 0;
   for (let i = 0; i < 2000; i++) if (pickWord(c, stats, []).word === 'bath') bath++;
-  assert.ok(bath > 2000 / 20 * 2, `bath picked ${bath} times`);
+  assert.ok(bath > (2000 / c.words.length) * 2.5, `bath picked ${bath} times`);
 });
 
 test('buildOptions tops up when distractors are short', () => {

@@ -1,15 +1,15 @@
 # YouTube Words
 
 A Chrome extension that turns YouTube time into reading practice. After a set amount of YouTube
-watching (default **5 minutes**), the video pauses and a colourful quiz slides over the page: a
+watching (currently **1 minute**), the video pauses and a colourful quiz slides over the page: a
 cartoon picture and four words. Pick the right word to get confetti, balloons and YouTube back.
 
 * Works on Chrome for **Mac and Windows**, installed as an unpacked ("side-loaded") extension.
 * Only runs on `*.youtube.com`. Other websites are never touched.
 * The words, pictures, sounds and settings come from [`extension/config.conf`](extension/config.conf) on
   GitHub. The extension checks for changes every 30 minutes.
-* There are 20 starter words (5 letters or fewer). Many of them practise letters that are often hard for
-  dyslexic readers, such as **b/d** (bed, dog, duck, drum, bird, desk) and **th** (bath, moth, teeth,
+* There are 40 words (5 letters or fewer). Many of them practise letters that are often hard for
+  dyslexic readers, such as **b/d** (bed, dog, bear, bread, crab, web), **th** (bath, moth, teeth,
   thumb, three). The wrong answers are look-alike words: *dog / bog / dig / dot*,
   *bed / dab / bad / red*, *three / tree / there / free*.
 * It keeps statistics on which words are read correctly, which are missed, and **which words they get
@@ -83,11 +83,11 @@ The config lives at [`extension/config.conf`](extension/config.conf). The format
 
 ```jsonc
 {
-  "version": 1,                          // bump this when you change pictures/sounds
+  "version": 2,                          // bump this when you change pictures/sounds
   "latestExtensionVersion": "1.0.0",
   "settings": {
     "githubCheckIntervalMinutes": 30,     // how often the extension checks GitHub
-    "overlayFrequencyMinutes": 5,         // YouTube minutes between quizzes (fractions OK: 0.5 = 30 s)
+    "overlayFrequencyMinutes": 1,         // YouTube minutes between quizzes (fractions OK: 0.5 = 30 s)
     "quizzesToUnlock": 1,                 // correct words needed to unlock
     "triesPerWord": 3                     // wrong tries before moving to a new word
   },

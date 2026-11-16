@@ -30,7 +30,7 @@ const remoteConfig = {
   words: [
     ...bundled.words,
     // exists only on "GitHub" (not shipped in the extension folder)
-    { word: 'frog', distractors: ['from', 'flog', 'grog'], image: 'assets/images/frog-remote-only.webp' },
+    { word: 'yarn', distractors: ['barn', 'yard', 'year'], image: 'assets/images/yarn-remote-only.webp' },
     // picture missing on GitHub too -> must be dropped, not shown broken
     { word: 'yak', distractors: ['yap', 'oak', 'yes'], image: 'assets/images/missing.webp' },
   ],
@@ -40,7 +40,7 @@ const github = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (url.pathname === '/extension/config.conf') return res.end(JSON.stringify(remoteConfig));
   if (url.pathname === '/extension/manifest.json') return res.end(JSON.stringify({ version: '9.9.9' }));
-  if (url.pathname === '/extension/assets/images/frog-remote-only.webp') {
+  if (url.pathname === '/extension/assets/images/yarn-remote-only.webp') {
     res.setHeader('Content-Type', 'image/webp');
     return fs.createReadStream(path.join(EXT, 'assets/images/duck.webp')).pipe(res);
   }
@@ -119,9 +119,9 @@ try {
   assert.equal(popupData.extUpdateAvailable, true);
   ok('popup reports newer extension version on GitHub');
   const words = config.words.map((w) => w.word);
-  assert.ok(words.includes('frog'), 'GitHub-only word added');
+  assert.ok(words.includes('yarn'), 'GitHub-only word added');
   assert.ok(!words.includes('yak'), 'word with missing picture dropped');
-  assert.ok((await storage('asset:assets/images/frog-remote-only.webp'))['asset:assets/images/frog-remote-only.webp']?.startsWith('data:image/webp'));
+  assert.ok((await storage('asset:assets/images/yarn-remote-only.webp'))['asset:assets/images/yarn-remote-only.webp']?.startsWith('data:image/webp'));
   ok('new GitHub-only word + picture downloaded; word with a 404 picture skipped');
 
   // --------------------------------------------------------------
