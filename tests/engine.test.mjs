@@ -22,7 +22,7 @@ test('bundled config.conf is valid; every word is short with a picture and audio
     assert.ok(!w.distractors.includes(w.word));
     for (const f of [w.image, w.audio]) assert.ok(existsSync(new URL(`../extension/${f}`, import.meta.url)), `${f} missing`);
   }
-  assert.deepEqual(c.settings, { githubCheckIntervalMinutes: 30, overlayFrequencyMinutes: 1, quizzesToUnlock: 1, triesPerWord: 3 });
+  assert.deepEqual(c.settings, { githubCheckIntervalMinutes: 30, overlayFrequencyMinutes: 3, quizzesToUnlock: 1, triesPerWord: 3 });
 });
 
 test('normalizeConfig clamps bad settings and rejects unsafe paths', () => {

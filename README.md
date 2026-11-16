@@ -1,7 +1,7 @@
 # YouTube Words
 
 A Chrome extension that turns YouTube time into reading practice. After a set amount of YouTube
-watching (currently **1 minute**), the video pauses and a colourful quiz slides over the page: a
+watching (currently **3 minutes**), the video pauses and a colourful quiz slides over the page: a
 cartoon picture and four words. Pick the right word to get confetti, balloons and YouTube back.
 
 * Works on Chrome for **Mac and Windows**, installed as an unpacked ("side-loaded") extension.
@@ -94,7 +94,7 @@ The config lives at [`extension/config.conf`](extension/config.conf). The format
   "latestExtensionVersion": "1.0.0",
   "settings": {
     "githubCheckIntervalMinutes": 30,     // how often the extension checks GitHub
-    "overlayFrequencyMinutes": 1,         // YouTube minutes between quizzes (fractions OK: 0.5 = 30 s)
+    "overlayFrequencyMinutes": 3,         // YouTube minutes between quizzes (fractions OK: 0.5 = 30 s)
     "quizzesToUnlock": 1,                 // correct words needed to unlock
     "triesPerWord": 3                     // wrong tries before moving to a new word
   },
