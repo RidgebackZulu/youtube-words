@@ -60,10 +60,16 @@ function renderStatus() {
   const banner = $('ext-update');
   banner.hidden = !d.extUpdateAvailable;
   if (d.extUpdateAvailable) {
+    const link = el('a', {
+      href: 'https://github.com/RidgebackZulu/youtube-words/releases/latest',
+      target: '_blank',
+      rel: 'noopener',
+      text: `Download version ${d.latestExtensionVersion}`,
+    });
     banner.replaceChildren(
-      `New extension version ${d.latestExtensionVersion} is on GitHub. Run `,
-      el('code', { text: 'git pull' }),
-      ' in the folder, then press reload on chrome://extensions.',
+      'New version available. ', link,
+      ' and unzip it over this extension\'s folder (or run ', el('code', { text: 'git pull' }),
+      '), then press ↻ on chrome://extensions.',
     );
   }
 }

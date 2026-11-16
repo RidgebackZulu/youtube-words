@@ -36,6 +36,7 @@ h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing
 .card { background: var(--card); margin: 10px 12px; padding: 12px; border-radius: 14px; border: 1px solid var(--line); }
 .banner { margin: 8px 12px 0; padding: 8px 10px; border-radius: 10px; background: #fff3bf; color: #5c3c00; font-size: 12px; }
 .banner code { background: rgba(0,0,0,.07); padding: 0 4px; border-radius: 4px; }
+.banner a { color: inherit; font-weight: 700; }
 
 .status-row { display: flex; align-items: center; gap: 8px; }
 .pill { font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 99px; background: #d3f9d8; color: #1b5e20; }

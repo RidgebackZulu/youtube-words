@@ -34,11 +34,18 @@ cartoon picture and four words. Pick the right word to get confetti, balloons an
 
 ## Install (Mac or Windows)
 
-1. Get the code: `git clone https://github.com/RidgebackZulu/youtube-words.git`, or use **Code → Download ZIP** on GitHub and unzip it.
+**Easiest: download the ZIP** (no git needed)
+
+1. Download **[youtube-words.zip](https://github.com/RidgebackZulu/youtube-words/releases/latest/download/youtube-words.zip)**
+   (always the latest release). Unzip it somewhere it can stay, such as Documents. Don't use Downloads,
+   which often gets cleaned out.
 2. In Chrome, open `chrome://extensions`.
 3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and choose the **`extension`** folder inside the project.
+4. Click **Load unpacked** and choose the unzipped **`youtube-words`** folder.
 5. Pin the extension: click the puzzle-piece icon, then the pin next to **YouTube Words**.
+
+**Or with git:** run `git clone https://github.com/RidgebackZulu/youtube-words.git`, then in step 4 choose
+the **`extension`** folder inside it.
 
 Open YouTube tabs are picked up straight away.
 
@@ -127,8 +134,23 @@ picture with the word written on it would give the answer away.
 ### Updating the extension code itself
 
 Chrome doesn't let side-loaded extensions replace their own code, so only words, pictures, sounds and
-settings update automatically. When the toolbar menu says there's a new version, run `git pull` in the
-project folder (or download the ZIP again), then click the ↻ reload button on `chrome://extensions`.
+settings update automatically. When the toolbar menu shows a **new version** banner:
+
+* **ZIP install:** download the new [youtube-words.zip](https://github.com/RidgebackZulu/youtube-words/releases/latest/download/youtube-words.zip)
+  and unzip it **over the same folder**, replacing the files. Then click ↻ reload on `chrome://extensions`.
+  Keep the same folder. Loading a different folder makes Chrome treat it as a new extension, and the word
+  stats start from zero.
+* **git install:** run `git pull`, then click ↻ reload.
+
+### Publishing a new version (maintainer)
+
+1. Bump `"version"` in `extension/manifest.json`, and `"latestExtensionVersion"` in `extension/config.conf`
+   to match. The second one makes installed copies show the banner.
+2. Commit and push, then tag the release: `git tag v1.0.3 && git push origin v1.0.3`.
+3. The **Release** GitHub Action checks that the tag matches the manifest. It then builds
+   `youtube-words.zip` and publishes it as the latest release.
+
+Changes that are only to words, pictures or settings don't need a release; pushing `config.conf` is enough.
 
 ## Development
 

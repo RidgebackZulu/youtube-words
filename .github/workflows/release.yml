@@ -1,0 +1,68 @@
+name: Release
+
+# Push a tag like v1.0.3 (matching "version" in extension/manifest.json) to publish
+# a GitHub release with youtube-words.zip attached. The ZIP holds one folder,
+# "youtube-words", which is what you choose in Chrome's "Load unpacked".
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)publish, e.g. v1.0.3'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Check tag matches manifest version
+        id: ver
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION=$(jq -r .version extension/manifest.json)
+          if [ "$TAG" != "v$VERSION" ]; then
+            echo "::error::Tag $TAG does not match manifest version $VERSION (expected v$VERSION)"
+            exit 1
+          fi
+          jq empty extension/config.conf
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build youtube-words.zip
+        run: |
+          mkdir -p dist
+          cp -R extension dist/youtube-words
+          find dist -name '.DS_Store' -delete
+          (cd dist && zip -qr youtube-words.zip youtube-words)
+          unzip -l dist/youtube-words.zip | tail -1
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<'EOF'
+          ## Install (Mac or Windows)
+          1. Download **youtube-words.zip** below and unzip it somewhere it will stay (e.g. Documents — not Downloads).
+          2. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, choose the `youtube-words` folder.
+
+          ## Updating from an earlier version
+          Unzip the new ZIP **over the same folder** (replace the files), then click ↻ on `chrome://extensions`.
+          Keep the same folder so Chrome keeps the word stats.
+          EOF
+          TAG=${{ steps.ver.outputs.tag }}
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/youtube-words.zip --clobber
+          else
+            gh release create "$TAG" dist/youtube-words.zip \
+              --title "YouTube Words ${{ steps.ver.outputs.version }}" \
+              --notes-file notes.md --generate-notes --latest
+          fi
