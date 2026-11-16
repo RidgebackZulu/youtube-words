@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Words",
   "short_name": "YT Words",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reading breaks for YouTube: every few minutes, answer a picture-word quiz to keep watching.",
   "minimum_chrome_version": "116",
   "icons": {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import {
   normalizeConfig, initialState, tick, lock, answer, pickWord, buildOptions,
-  configAssetPaths, compareVersions, MAX_HEARTBEAT_GAP_MS,
+  configAssetPaths, compareVersions, MAX_HEARTBEAT_GAP_MS, applyIntervalChange,
 } from '../extension/lib/engine.js';
 
 const bundled = JSON.parse(readFileSync(new URL('../extension/config.conf', import.meta.url), 'utf8'));
@@ -155,4 +155,16 @@ test('asset paths and version compare', () => {
   assert.ok(paths.includes('assets/audio/phrases/prompt.mp3'));
   assert.ok(compareVersions('1.0.10', '1.0.9') > 0);
   assert.equal(compareVersions('1.0', '1.0.0'), 0);
+});
+
+test('changing the quiz interval restarts the countdown (but never interrupts a quiz)', () => {
+  const c = cfg({ overlayFrequencyMinutes: 5 });
+  let s = initialState();
+  for (let t = 1000; t <= 151_000; t += 5000) s = tick(s, c, {}, t);
+  assert.equal(Math.round(s.usedSeconds), 150);
+  const r = applyIntervalChange(s, 5, 1, 200_000);
+  assert.equal(r.usedSeconds, 0, 'fresh 1-minute window');
+  assert.equal(applyIntervalChange(s, 5, 5, 1), s, 'same interval: untouched');
+  const locked = lock(s, c, {}, 1, seeded());
+  assert.equal(applyIntervalChange(locked, 5, 1, 2), locked, 'locked: untouched');
 });

@@ -4,6 +4,7 @@
 
 import {
   normalizeConfig, configAssetPaths, initialState, tick, lock, answer, recordShown, compareVersions,
+  applyIntervalChange,
 } from './lib/engine.js';
 
 const DEFAULT_REMOTE_BASE = 'https://raw.githubusercontent.com/RidgebackZulu/youtube-words/main/extension/';
@@ -124,6 +125,18 @@ async function publicState(state, config) {
   return out;
 }
 
+// A new quiz interval starts a fresh countdown with the new length.
+function restartWindowIfIntervalChanged(oldConfig, newConfig) {
+  const before = oldConfig?.settings?.overlayFrequencyMinutes;
+  const after = newConfig?.settings?.overlayFrequencyMinutes;
+  if (before === undefined || before === after) return Promise.resolve();
+  return serial(async () => {
+    const state = await get('state');
+    const next = applyIntervalChange(state, before, after, Date.now());
+    if (next !== state) await set({ state: next });
+  });
+}
+
 // ---------- GitHub updates ----------
 
 async function remoteBase() {
@@ -196,6 +209,7 @@ async function doCheckForUpdates() {
       const stale = Object.keys(await store.get(null)).filter((k) => k.startsWith(ASSET_PREFIX) && !keep.has(k));
       if (stale.length) await store.remove(stale);
       await set({ config: remote, configSource: 'github' });
+      await restartWindowIfIntervalChanged(active, remote);
       configCache = remote;
       meta.lastUpdate = Date.now();
       meta.lastUpdateNote = `config v${remote.version}, ${Object.keys(downloads).length} file(s) downloaded` +
@@ -224,6 +238,7 @@ chrome.runtime.onInstalled.addListener(async () => {
       const old = Object.keys(await store.get(null)).filter((k) => k.startsWith(ASSET_PREFIX));
       if (old.length) await store.remove(old);
       await set({ config: bundled, configSource: 'bundled' });
+      await restartWindowIfIntervalChanged(stored, bundled);
       configCache = bundled;
     }
   } catch (e) {

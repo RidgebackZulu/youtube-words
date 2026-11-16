@@ -113,6 +113,16 @@ export function lock(state, config, stats, now, rng = Math.random) {
   return startQuiz(s, config, stats, rng);
 }
 
+/**
+ * The quiz interval was changed (new config.conf). Start a fresh window with the new length,
+ * so the countdown shows the full new interval instead of carrying over time from the old one.
+ * A quiz already on screen is left alone; the window restarts when it is unlocked anyway.
+ */
+export function applyIntervalChange(state, oldMinutes, newMinutes, now) {
+  if (!state || state.locked || oldMinutes === newMinutes) return state;
+  return { ...state, usedSeconds: 0, lastTick: now };
+}
+
 export function unlock(state, now) {
   return { ...state, locked: false, lockedAt: null, passedThisLock: 0, quiz: null, usedSeconds: 0, lastTick: now };
 }

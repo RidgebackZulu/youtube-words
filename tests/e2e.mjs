@@ -271,6 +271,20 @@ try {
   assert.equal(stats[firstQuiz.word].confusions[wrongs[0]], 1);
   ok(`stats: "${firstQuiz.word}" wrong ×3, confused with ${Object.keys(stats[firstQuiz.word].confusions).join(', ')}`);
 
+  // --------------------------------------------------------------
+  step('Interval changed on GitHub (5 min → 1 min) after 2:30 watched → countdown restarts at 1:00');
+  await ext.evaluate(async () => {
+    const { state } = await chrome.storage.local.get('state');
+    await chrome.storage.local.set({ state: { ...state, usedSeconds: 150 } });
+  });
+  remoteConfig.settings = { ...remoteConfig.settings, overlayFrequencyMinutes: 1 };
+  await msg({ type: 'checkUpdates' });
+  const afterChange = await msg({ type: 'getPopupData', light: true });
+  assert.equal(afterChange.settings.overlayFrequencyMinutes, 1);
+  assert.ok(afterChange.usedSeconds < 2, `countdown restarted (used ${afterChange.usedSeconds}s)`);
+  assert.equal(afterChange.locked, false, 'no surprise quiz');
+  ok('fresh 1-minute window, no instant quiz');
+
 
   // --------------------------------------------------------------
   step('New tab opened while locked is locked immediately; unlocking one tab unlocks all');
