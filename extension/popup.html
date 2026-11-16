@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YouTube Words</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="icons/icon48.png" alt="" width="32" height="32">
+    <div>
+      <h1>YouTube Words</h1>
+      <div class="sub" id="version"></div>
+    </div>
+  </header>
+
+  <div class="banner" id="ext-update" hidden></div>
+
+  <section class="card status" id="status">
+    <div class="status-row">
+      <span class="pill" id="pill">…</span>
+      <span class="status-text" id="status-text"></span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="bar"></div></div>
+    <div class="actions">
+      <button id="lock-now" class="btn primary">Start a quiz now</button>
+      <button id="check" class="btn">Check for updates</button>
+    </div>
+    <div class="note" id="update-note"></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <h2>Word stats</h2>
+      <div class="seg" role="tablist">
+        <button data-sort="hard" class="on">Needs practice</button>
+        <button data-sort="easy">Known best</button>
+      </div>
+    </div>
+    <div class="summary" id="summary"></div>
+    <ol class="words" id="words"></ol>
+    <div class="empty" id="empty" hidden>No answers yet. Stats appear after the first quiz.</div>
+  </section>
+
+  <section class="card">
+    <h2>Settings <span class="muted">(from config.conf on GitHub)</span></h2>
+    <dl class="settings" id="settings"></dl>
+    <button id="reset" class="btn danger small">Reset stats</button>
+  </section>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

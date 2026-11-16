@@ -1,0 +1,15 @@
+{
+  "name": "youtube-words",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension: reading quiz breaks for YouTube",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/engine.test.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "generate": "node scripts/generate-assets.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1"
+  }
+}
