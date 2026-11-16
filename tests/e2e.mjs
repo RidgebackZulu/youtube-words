@@ -123,6 +123,16 @@ try {
   assert.ok(!words.includes('yak'), 'word with missing picture dropped');
   assert.ok((await storage('asset:assets/images/yarn-remote-only.webp'))['asset:assets/images/yarn-remote-only.webp']?.startsWith('data:image/webp'));
   ok('new GitHub-only word + picture downloaded; word with a 404 picture skipped');
+  const goodVersion = remoteConfig.version;
+  remoteConfig.version = 1;
+  remoteConfig.settings = { ...remoteConfig.settings, quizzesToUnlock: 9 };
+  await msg({ type: 'checkUpdates' });
+  const kept = (await storage('config')).config;
+  assert.equal(kept.version, goodVersion);
+  assert.equal(kept.settings.quizzesToUnlock, 2);
+  remoteConfig.version = goodVersion;
+  remoteConfig.settings = { ...remoteConfig.settings, quizzesToUnlock: 2 };
+  ok('a stale (older) config from GitHub is ignored');
 
   // --------------------------------------------------------------
   step('Watching YouTube until the 6-second window runs out');

@@ -165,7 +165,10 @@ async function doCheckForUpdates() {
     }
 
     const active = await getConfig();
-    const changed = JSON.stringify(remote) !== JSON.stringify(active);
+    // GitHub's CDN can briefly serve a stale copy right after a push; never go backwards.
+    const older = remote.version < active.version;
+    const changed = !older && JSON.stringify(remote) !== JSON.stringify(active);
+    if (older) meta.lastUpdateNote = `GitHub copy is older (v${remote.version}); keeping v${active.version}`;
     if (changed) {
       // New version number => refresh every asset (pictures may have been redrawn under the same name).
       // Same version => only fetch assets we don't already have.
